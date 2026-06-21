@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: file:; connect-src 'self' file: blob: http://127.0.0.1:11434; media-src 'self' file: blob:;"
+    />
+    <title>Live2D Model Viewer</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="/live2dcubismcore.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <main id="stage-wrap">
+        <canvas id="canvas"></canvas>
+        <div id="status" class="status hidden"></div>
+      </main>
+
+      <div id="chat-bubble" class="chat-bubble hidden" aria-live="polite">
+        <p id="chat-bubble-text"></p>
+      </div>
+
+      <section id="chat-panel" class="chat-panel hidden" aria-label="Chat with Fluffy">
+        <header class="chat-panel-header">
+          <span class="chat-panel-title">Fluffy 🐰</span>
+          <button id="chat-clear" type="button" class="chat-panel-clear">Clear</button>
+        </header>
+        <div id="chat-log" class="chat-log"></div>
+        <div class="chat-input-row">
+          <button id="chat-mic" type="button" class="chat-mic-btn" title="Hold to talk (Whisper)" aria-label="Hold to talk">🎤</button>
+          <input id="chat-input" type="text" placeholder="Talk to me…" autocomplete="off" />
+          <button id="chat-send" type="button">Send</button>
+        </div>
+      </section>
+
+      <nav id="dock" class="dock" aria-label="Controls">
+        <button id="dock-handle" class="dock-handle" type="button" aria-label="Drag to move avatar">
+          <svg width="8" height="14" viewBox="0 0 8 14" aria-hidden="true">
+            <circle cx="2" cy="2" r="1.2" fill="currentColor" />
+            <circle cx="6" cy="2" r="1.2" fill="currentColor" />
+            <circle cx="2" cy="7" r="1.2" fill="currentColor" />
+            <circle cx="6" cy="7" r="1.2" fill="currentColor" />
+            <circle cx="2" cy="12" r="1.2" fill="currentColor" />
+            <circle cx="6" cy="12" r="1.2" fill="currentColor" />
+          </svg>
+        </button>
+        <div class="dock-actions">
+          <button id="btn-open" type="button" class="dock-btn" title="Open model" aria-label="Open model">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M3 7v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9" />
+              <path d="M3 7l3-4h8l3 4" />
+            </svg>
+          </button>
+          <button id="btn-pin" type="button" class="dock-btn" title="Always on top" aria-label="Always on top" aria-pressed="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12 17v5" />
+              <path d="M9 3h6l1 7H8L9 3z" />
+              <path d="M8 10l-3 3v2h14v-2l-3-3" />
+            </svg>
+          </button>
+          <button id="btn-mic" type="button" class="dock-btn" title="Hold to talk (Whisper)" aria-label="Hold to talk">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3z" />
+              <path d="M19 11v1a7 7 0 0 1-14 0v-1" />
+              <path d="M12 19v3" />
+            </svg>
+          </button>
+          <button id="btn-voice" type="button" class="dock-btn" title="Fluffy voice (XTTS)" aria-label="Fluffy voice" aria-pressed="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M11 5L6 9H3v6h3l5 4V5z" />
+              <path d="M16 9a4 4 0 0 1 0 6" />
+              <path d="M19 7a7 7 0 0 1 0 10" />
+            </svg>
+          </button>
+          <button id="btn-chat" type="button" class="dock-btn" title="Chat with Fluffy" aria-label="Chat with Fluffy" aria-pressed="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7l-4 3V11.5a8.5 8.5 0 0 1 8.5-8.5h1a8.5 8.5 0 0 1 8.5 8.5z" />
+            </svg>
+          </button>
+          <button id="btn-clickthrough" type="button" class="dock-btn" title="Click-through mode" aria-label="Click-through mode" aria-pressed="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M3 3l7 7" />
+              <path d="M14 3l7 7" />
+              <path d="M3 14l7 7" />
+              <path d="M14 14l7 7" />
+            </svg>
+          </button>
+          <button id="btn-minimize" type="button" class="dock-btn" title="Minimize" aria-label="Minimize">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14" />
+            </svg>
+          </button>
+          <button id="btn-close" type="button" class="dock-btn dock-btn-danger" title="Close" aria-label="Close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M6 6l12 12" />
+              <path d="M18 6L6 18" />
+            </svg>
+          </button>
+        </div>
+      </nav>
+    </div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

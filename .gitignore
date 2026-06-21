@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.viewer.pid
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.*
+
+# Large Live2D model assets — add your own model locally
+tuzi_mian__2_/
+*.moc3

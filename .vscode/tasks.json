@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Live2D Viewer: Start",
+      "type": "npm",
+      "script": "app",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "clear": true
+      }
+    },
+    {
+      "label": "Live2D Viewer: Stop",
+      "type": "npm",
+      "script": "app:stop",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "clear": true
+      }
+    },
+    {
+      "label": "Live2D Viewer: Restart",
+      "type": "npm",
+      "script": "app:restart",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "clear": true
+      }
+    },
+    {
+      "label": "Live2D Viewer: Dev",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true
+      }
+    }
+  ]
+}

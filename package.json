@@ -1,0 +1,38 @@
+{
+  "name": "live2d-model-viewer",
+  "version": "0.1.0",
+  "description": "Custom Live2D model viewer — VTube-style desktop overlay without VTube Studio",
+  "main": "electron/main.js",
+  "scripts": {
+    "setup": "node scripts/setup-cubism-core.js",
+    "setup:whisper": "node scripts/setup-whisper.js",
+    "setup:xtts": "node scripts/setup-xtts.js",
+    "dev": "concurrently -k \"vite\" \"wait-on http://localhost:5173 && cross-env ELECTRON_DEV=1 electron .\"",
+    "build": "vite build",
+    "start": "electron .",
+    "preview": "npm run build && electron .",
+    "app": "node scripts/start-app.js",
+    "app:stop": "node scripts/stop-app.js",
+    "app:restart": "node scripts/stop-app.js && node scripts/start-app.js",
+    "app:status": "node scripts/status-app.js"
+  },
+  "keywords": [
+    "live2d",
+    "cubism",
+    "vtuber",
+    "electron"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^35.0.1",
+    "vite": "^6.2.0",
+    "wait-on": "^8.0.3"
+  },
+  "dependencies": {
+    "@pixi/unsafe-eval": "^6.5.10",
+    "pixi-live2d-display": "^0.4.0",
+    "pixi.js": "^6.5.10"
+  }
+}

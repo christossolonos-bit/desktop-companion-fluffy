@@ -1,0 +1,336 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  user-select: none;
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+}
+
+#stage-wrap {
+  position: absolute;
+  inset: 0;
+}
+
+#canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.dock {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px 6px 6px;
+  border-radius: 999px;
+  background: rgba(18, 20, 28, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  touch-action: none;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+.dock.dragging {
+  cursor: grabbing;
+}
+
+.dock-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 32px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: grab;
+  padding: 0;
+}
+
+.dock-handle:hover {
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.dock.dragging .dock-handle {
+  cursor: grabbing;
+}
+
+.dock-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.dock-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.88);
+  cursor: pointer;
+  padding: 0;
+}
+
+.dock-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.dock-btn[aria-pressed="true"],
+.dock-btn-active {
+  background: rgba(99, 179, 237, 0.35);
+  color: #fff;
+}
+
+.dock-btn-active {
+  box-shadow: 0 0 0 2px rgba(244, 114, 182, 0.55);
+}
+
+.dock-btn-danger:hover {
+  background: rgba(229, 62, 62, 0.75);
+  color: #fff;
+}
+
+.status {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  max-width: calc(100% - 24px);
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 12px;
+  z-index: 5;
+}
+
+.status.hidden {
+  display: none;
+}
+
+.status.error {
+  background: rgba(120, 24, 24, 0.75);
+}
+
+body.has-model .status {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+body.has-model #stage-wrap:hover ~ .status,
+body.has-model .status:hover {
+  opacity: 1;
+}
+
+.chat-bubble {
+  position: absolute;
+  z-index: 9998;
+  max-width: min(320px, 80vw);
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(255, 245, 252, 0.94);
+  border: 1px solid rgba(255, 182, 220, 0.65);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+  color: #3d2a3a;
+  font-size: 13px;
+  line-height: 1.45;
+  transform: translate(-50%, -100%);
+  pointer-events: auto;
+}
+
+.chat-bubble.hidden {
+  display: none;
+}
+
+.chat-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 14px;
+  height: 14px;
+  background: rgba(255, 245, 252, 0.94);
+  border-right: 1px solid rgba(255, 182, 220, 0.65);
+  border-bottom: 1px solid rgba(255, 182, 220, 0.65);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+#chat-bubble-text {
+  margin: 0;
+  user-select: text;
+}
+
+.chat-panel {
+  position: absolute;
+  z-index: 9997;
+  width: min(340px, 88vw);
+  max-height: min(360px, 50vh);
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  background: rgba(18, 20, 28, 0.9);
+  border: 1px solid rgba(255, 182, 220, 0.25);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  transform: translate(-50%, -100%);
+  pointer-events: auto;
+  overflow: hidden;
+}
+
+.chat-panel:not(.hidden) {
+  margin-bottom: 0;
+}
+
+.chat-panel.hidden {
+  display: none;
+}
+
+.chat-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chat-panel-title {
+  color: #ffd6ec;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.chat-panel-clear {
+  border: none;
+  border-radius: 8px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.chat-panel-clear:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.chat-log {
+  flex: 1;
+  min-height: 120px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-log-item {
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 8px 10px;
+  border-radius: 10px;
+  user-select: text;
+}
+
+.chat-log-user {
+  align-self: flex-end;
+  background: rgba(99, 179, 237, 0.2);
+  color: #dbeafe;
+}
+
+.chat-log-assistant {
+  align-self: flex-start;
+  background: rgba(255, 182, 220, 0.15);
+  color: #ffd6ec;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  align-items: center;
+}
+
+.chat-mic-btn {
+  border: none;
+  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.chat-mic-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.chat-mic-btn[aria-pressed="true"] {
+  background: rgba(244, 114, 182, 0.35);
+}
+
+#chat-input {
+  flex: 1;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.25);
+  color: #fff;
+  font-size: 12px;
+  outline: none;
+}
+
+#chat-input:focus {
+  border-color: rgba(255, 182, 220, 0.55);
+}
+
+#chat-send {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #f687b3, #ed64a6);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#chat-send:hover {
+  filter: brightness(1.06);
+}
+
+#chat-send:disabled,
+#chat-input:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
