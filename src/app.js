@@ -27,15 +27,6 @@ let statusHideTimer = null;
 let avatarPlacement = { x: 0, y: 0 };
 let chatUi = null;
 
-const PARAM_IDS = {
-  angleX: ['ParamAngleX'],
-  angleY: ['ParamAngleY'],
-  angleZ: ['ParamAngleZ'],
-  eyeX: ['ParamEyeBallX'],
-  eyeY: ['ParamEyeBallY'],
-  bodyX: ['ParamBodyAngleX'],
-};
-
 function setStatus(message, isError = false) {
   if (!message) {
     statusEl.classList.add('hidden');
@@ -204,38 +195,7 @@ function ensureApp() {
   app.stage.interactive = true;
   app.stage.hitArea = app.screen;
 
-  app.stage.on('pointermove', (event) => {
-    if (!currentModel) return;
-    applyMouseTracking(currentModel, event.global.x, event.global.y);
-  });
-
   return app;
-}
-
-function setParameter(model, ids, value) {
-  const core = model.internalModel.coreModel;
-  for (const id of ids) {
-    const index = core?.getParameterIndex?.(id);
-    if (index != null && index >= 0) {
-      core.setParameterValueByIndex(index, value);
-      return true;
-    }
-  }
-  return false;
-}
-
-function applyMouseTracking(model, x, y) {
-  const dx = x - model.x;
-  const dy = y - model.y;
-  const nx = Math.max(-1, Math.min(1, dx / 180));
-  const ny = Math.max(-1, Math.min(1, dy / 180));
-
-  setParameter(model, PARAM_IDS.angleX, nx * 30);
-  setParameter(model, PARAM_IDS.angleY, -ny * 30);
-  setParameter(model, PARAM_IDS.angleZ, nx * ny * -10);
-  setParameter(model, PARAM_IDS.eyeX, nx);
-  setParameter(model, PARAM_IDS.eyeY, -ny);
-  setParameter(model, PARAM_IDS.bodyX, nx * 10);
 }
 
 function scaleModelToFit(model) {
@@ -257,9 +217,10 @@ function scaleModelToFit(model) {
 function startIdleMotion(model) {
   const groups = model.internalModel?.motionManager?.groups ?? {};
   const idleGroup = Object.keys(groups).find((name) => name.toLowerCase() === 'idle');
-  if (idleGroup) {
-    model.motion(idleGroup);
+  if (!idleGroup || !model.internalModel?.motionManager?.definitions?.[idleGroup]?.length) {
+    return;
   }
+  model.motion(idleGroup);
 }
 
 function wireModelInteractions(model) {
